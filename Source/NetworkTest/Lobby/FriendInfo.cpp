@@ -37,19 +37,30 @@ void UFriendInfo::RefreshFriendInfo() {
 
 			FriendGameInfo_t info;
 			steamFriends->GetFriendGamePlayed(id, &info);
-			std::string TestString = steamFriends->GetFriendPersonaName(id);
-			FString name = UTF8_TO_TCHAR(TestString.c_str());
+			if (info.m_gameID.ToUint64() == 480) {
+				std::string TestString = steamFriends->GetFriendPersonaName(id);
+				FString name = UTF8_TO_TCHAR(TestString.c_str());
 
-			UFriendInformation* newInformation = NewObject<UFriendInformation>(this);
-			newInformation->name = name;
-			newInformation->steamID = id.ConvertToUint64();
-			newInformation->avatar = GetSteamAvatar(newInformation->steamID);
-			FriendInformations.Add(newInformation);
+				UFriendInformation* newInformation = NewObject<UFriendInformation>(this);
+				newInformation->name = name;
+				newInformation->steamID = id.ConvertToUint64();
+				newInformation->avatar = GetSteamAvatar(newInformation->steamID);
+				FriendInformations.Add(newInformation);
+			}
 		}
 	}
 	else {
 		MYLOG(Warning, TEXT("Steam is not running."));
 	}
+}
+UFriendInformation * UFriendInfo::GetFriendInformationBySteamID(const UINT64 & id)
+{
+	for (int i = 0; i < FriendInformations.Num(); ++i) {
+		if (FriendInformations[i]->steamID == id) {
+			return FriendInformations[i];
+		}
+	}
+	return nullptr;
 }
 UTexture2D* UFriendInfo::GetSteamAvatar(uint64 steamID)
 {

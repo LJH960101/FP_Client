@@ -3,6 +3,7 @@
 #include "NetworkGameInstance.h"
 #include "Steamworks/Steamv139/sdk/public/steam/steam_api.h"
 #include <string>
+#include <fstream>
 
 using std::mutex;
 
@@ -74,12 +75,23 @@ bool UNetworkGameInstance::InitSocket()
 
 	WSAData wsa;
 	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0) return false;
-
+	
 	// Addr Define
 	SOCKADDR_IN serveraddr;
 	ZeroMemory(&serveraddr, sizeof(serveraddr));
 	serveraddr.sin_family = AF_INET;
-	serveraddr.sin_addr.s_addr = inet_addr(SERVER_IP);
+
+	// IP가 적힌 텍스트 파일이 있다면, 불러온다.
+	std::ifstream ipText("C:\\ip.txt");
+	if (ipText) {
+		char buf[100];
+		ipText >> buf;
+		serveraddr.sin_addr.s_addr = inet_addr(buf);
+		MYLOG(Warning, TEXT("%s"), buf);
+		
+	}
+	else serveraddr.sin_addr.s_addr = inet_addr(SERVER_IP);
+
 	serveraddr.sin_port = htons(SERVER_PORT);
 
 	SOCKET client_sock = socket(AF_INET, SOCK_STREAM, 0);

@@ -8,7 +8,7 @@ public class NetworkTest : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
         PublicAdditionalLibraries.Add(@"D:\Program File\Epic Games\UE_4.21\Engine\Source\ThirdParty\Steamworks\Steamv139\sdk\redistributable_bin\win64\steam_api64.lib");
-        PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "OnlineSubsystem", "OnlineSubsystemUtils" });
+        PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "OnlineSubsystem", "OnlineSubsystemUtils", "UMG" });
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 		DynamicallyLoadedModuleNames.Add("OnlineSubsystemSteam");
 

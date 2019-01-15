@@ -7,6 +7,9 @@
 #include "LobbyManager.generated.h"
 
 class UFriendInfo;
+class UFriendInformation;
+class UNetworkGameInstance;
+
 UCLASS()
 class NETWORKTEST_API ALobbyManager : public AActor
 {
@@ -14,6 +17,7 @@ class NETWORKTEST_API ALobbyManager : public AActor
 private:
 	UPROPERTY()
 	UFriendInfo* friendInfos;
+	UNetworkGameInstance* gameInstance;
 
 public:	
 	// Sets default values for this actor's properties
@@ -23,16 +27,23 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Friend")
 	int GetFriendLen();
 	UFUNCTION(BlueprintCallable, Category = "Friend")
-	FString GetFriendName(int number);
+	FString GetFriendName(const int& number);
 	UFUNCTION(BlueprintCallable, Category = "Friend")
-	UTexture2D* GetFriendImage(int number);
+	FString GetFriendSteamID(const int& number);
+	UFUNCTION(BlueprintCallable, Category = "Friend")
+	UTexture2D* GetFriendImage(const int& number);
+	UFUNCTION(BlueprintCallable, Category = "InviteFriend")
+	void InviteFriend(FString steamID);
+	UFUNCTION(BlueprintCallable, Category = "InviteFriend")
+	void AnswerInviteRequest(bool isYes);
+	UFUNCTION(BlueprintCallable, Category = "Matching")
+	void OnReady(bool isOn);
+	UFUNCTION(BlueprintCallable, Category = "Kick")
+	void Kick(int playerNumber);
+	UFriendInformation* GetFriendBySteamId(const UINT64& steamID);
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
 
 };
