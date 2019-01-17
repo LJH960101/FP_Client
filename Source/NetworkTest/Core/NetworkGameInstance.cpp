@@ -146,6 +146,16 @@ UINT64 UNetworkGameInstance::GetSteamID()
 	else return 0;
 }
 
+FString UNetworkGameInstance::UINT64ToFString(const UINT64 val)
+{
+	return FString::Printf(TEXT("%llu"), val);
+}
+
+UINT64 UNetworkGameInstance::FStringToUINT64(const FString val)
+{
+	return FCString::Strtoui64(*val, NULL, 10);
+}
+
 DWORD WINAPI UNetworkGameInstance::RecvThread(LPVOID arg)
 {
 	UNetworkGameInstance* owner = (UNetworkGameInstance*)arg;

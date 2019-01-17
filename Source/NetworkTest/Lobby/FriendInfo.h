@@ -34,7 +34,6 @@ public:
 	UPROPERTY()
 	TArray<UFriendInformation*> FriendInformations;
 	UFriendInformation* GetFriendInformationBySteamID(const UINT64& id);
-private:
-	UTexture2D* GetSteamAvatar(uint64 steamID);
+	UTexture2D* GetSteamAvatar(const uint64& steamID);
 	void InitArray();
 };

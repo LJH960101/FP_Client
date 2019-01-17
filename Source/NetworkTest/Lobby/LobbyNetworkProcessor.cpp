@@ -13,6 +13,8 @@ ALobbyNetworkProcessor::ALobbyNetworkProcessor()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	// 초대 요청 창
 	static ConstructorHelpers::FClassFinder<UWidgetFriendRequest> inviteRequestWG(TEXT("/Game/UI/Lobby/WB_FriendRequest.WB_FriendRequest_C"));
 	if (inviteRequestWG.Succeeded()) {
 		WG_RequestInvite_Class = inviteRequestWG.Class;
@@ -20,6 +22,16 @@ ALobbyNetworkProcessor::ALobbyNetworkProcessor()
 	else
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "inviteRequestWG not found !");
+	}
+
+	// 초대 실패
+	static ConstructorHelpers::FClassFinder<UUserWidget> failedWG(TEXT("/Game/UI/Lobby/WB_InviteFailed.WB_InviteFailed_C"));
+	if (failedWG.Succeeded()) {
+		WG_Failed_Class = failedWG.Class;
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, "failedWG not found !");
 	}
 }
 
@@ -67,18 +79,38 @@ void ALobbyNetworkProcessor::RecvProc(FReciveData& data)
 		{
 		case EMessageType::S_Match_InviteFriend_Answer:
 		{
+			UINT64 slot1 = CSerializer::UInt64Deserializer(data.buf + pos);
+			pos += sizeof(UINT64);
+			UINT64 slot2 = CSerializer::UInt64Deserializer(data.buf + pos);
+			pos += sizeof(UINT64);
+			UINT64 slot3 = CSerializer::UInt64Deserializer(data.buf + pos);
+			pos += sizeof(UINT64);
+			UINT64 slot4 = CSerializer::UInt64Deserializer(data.buf + pos);
+			pos += sizeof(UINT64);
+			LobbyManager->RefreshSlot(1, slot1);
+			LobbyManager->RefreshSlot(2, slot2);
+			LobbyManager->RefreshSlot(3, slot3);
+			LobbyManager->RefreshSlot(4, slot4);
+			LobbyManager->RefreshLobby();
 			break;
 		}
 		case EMessageType::S_Match_InviteFriend_Request:
 		{
 			UINT64 senderID = CSerializer::UInt64Deserializer(data.buf + pos);
-			FString stringSenderID = FString::Printf(TEXT("%llu"), senderID);
+			FString stringSenderID = UNetworkGameInstance::UINT64ToFString(senderID);
 			// 초대 요청 창을 띄운당.
 			if (WG_RequestInvite == nullptr) WG_RequestInvite = CreateWidget<UWidgetFriendRequest>(GetWorld(), WG_RequestInvite_Class);
 			WG_RequestInvite->AddToViewport();
 			WG_RequestInvite->SetSteamID(stringSenderID);
 			WG_RequestInvite->SetUserName(LobbyManager->GetFriendBySteamId(senderID)->name);
 			pos += sizeof(UINT64);
+			break;
+		}
+		case EMessageType::S_Match_InviteFriend_Failed:
+		{
+			// 실패 위젯을 띄운다.
+			if (WG_Failed == nullptr) WG_Failed = CreateWidget<UWidgetFriendRequest>(GetWorld(), WG_Failed_Class);
+			WG_Failed->AddToViewport();
 			break;
 		}
 		case EMessageType::S_Match_FriendKick_Notification:

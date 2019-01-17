@@ -37,7 +37,7 @@ void UFriendInfo::RefreshFriendInfo() {
 
 			FriendGameInfo_t info;
 			steamFriends->GetFriendGamePlayed(id, &info);
-			if (info.m_gameID.ToUint64() == 480) {
+			if (info.m_gameID.ToUint64() == 480) { // 같은 게임을 하는 중인가?
 				std::string TestString = steamFriends->GetFriendPersonaName(id);
 				FString name = UTF8_TO_TCHAR(TestString.c_str());
 
@@ -62,7 +62,7 @@ UFriendInformation * UFriendInfo::GetFriendInformationBySteamID(const UINT64 & i
 	}
 	return nullptr;
 }
-UTexture2D* UFriendInfo::GetSteamAvatar(uint64 steamID)
+UTexture2D* UFriendInfo::GetSteamAvatar(const uint64& steamID)
 {
 	UNetworkGameInstance* gameInstance = Cast<UNetworkGameInstance>(GetWorld()->GetGameInstance());
 	if (gameInstance == nullptr) {
@@ -77,6 +77,7 @@ UTexture2D* UFriendInfo::GetSteamAvatar(uint64 steamID)
 		CSteamID PlayerRawID(steamID);
 		//Getting the PictureID from the SteamAPI and getting the Size with the ID
 		int Picture = SteamFriends()->GetMediumFriendAvatar(PlayerRawID);
+		if (Picture == 0) return nullptr;
 		SteamUtils()->GetImageSize(Picture, &Width, &Height);
 
 

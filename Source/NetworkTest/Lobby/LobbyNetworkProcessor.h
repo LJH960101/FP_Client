@@ -29,6 +29,13 @@ private:
 	TSubclassOf<class UWidgetFriendRequest> WG_RequestInvite_Class;
 	UPROPERTY()
 	UWidgetFriendRequest* WG_RequestInvite;
+
+	// 실패 안내 위젯
+	UPROPERTY()
+	TSubclassOf<class UUserWidget> WG_Failed_Class;
+	UPROPERTY()
+	UUserWidget* WG_Failed;
+
 	ALobbyManager* LobbyManager;
 
 public:	

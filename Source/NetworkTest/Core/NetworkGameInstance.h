@@ -38,6 +38,9 @@ public:
 	void Send(const char* buf, int len);
 	UINT64 GetSteamID();
 
+	static FString UINT64ToFString(const UINT64 val);
+	static UINT64 FStringToUINT64(const FString val);
+
 private:
 	virtual void Init();
 	virtual void Shutdown();
