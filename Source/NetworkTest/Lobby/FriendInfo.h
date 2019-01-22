@@ -6,6 +6,7 @@
 #include "UObject/NoExportTypes.h"
 #include "FriendInfo.generated.h"
 
+// 친구에 대한 정보를 담는 클래스
 UCLASS()
 class NETWORKTEST_API UFriendInformation : public UObject
 {
@@ -34,6 +35,5 @@ public:
 	UPROPERTY()
 	TArray<UFriendInformation*> FriendInformations;
 	UFriendInformation* GetFriendInformationBySteamID(const UINT64& id);
-	UTexture2D* GetSteamAvatar(const uint64& steamID);
 	void InitArray();
 };

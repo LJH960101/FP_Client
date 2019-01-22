@@ -1,8 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "CommonNetworkProcessor.h"
-#include "../Core/NetworkGameInstance.h"
-#include "../NetworkModule/Serializer.h"
+#include "Core/NetworkGameInstance.h"
+#include "Core/Network/NetworkSystem.h"
+#include "NetworkModule/Serializer.h"
 
 // Sets default values
 ACommonNetworkProcessor::ACommonNetworkProcessor()
@@ -27,17 +28,17 @@ void ACommonNetworkProcessor::BeginPlay()
 
 void ACommonNetworkProcessor::RecvProc(FReciveData& data)
 {
-	int pos = 0;
-	while (pos < data.len) {
-		EMessageType type = CSerializer::GetEnum(data.buf);
-		pos += sizeof(EMessageType);
+	int cursor = 0;
+	while (cursor < data.len) {
+		int bufLen = CSerializer::IntDeserialize(data.buf, cursor) - sizeof(EMessageType);
+		//if (bufLen <= 0) return;
+		EMessageType type = CSerializer::GetEnum(data.buf, cursor);
 		switch (type)
 		{
 		case COMMON_ECHO:
 		{
-			FSerializableString res = CSerializer::StringDeserializer(data.buf + pos);
+			FSerializableString res = CSerializer::StringDeserializer(data.buf, cursor);
 			MYLOG(Warning, TEXT("%s"), res.buf);
-			pos += res.len;
 			break;
 		}
 		case COMMON_PING:
@@ -45,9 +46,9 @@ void ACommonNetworkProcessor::RecvProc(FReciveData& data)
 #ifdef DEBUG_RECV
 			MYLOG(Warning, TEXT("recv : COMMON_PING"));
 #endif
-			char newBuf[10];
-			int len = CSerializer::SerializeWithEnum(COMMON_PING, nullptr, 0, newBuf);
-			gameInstance->Send(newBuf, len);
+			char newBuf[sizeof(EMessageType)];
+			int len = CSerializer::SerializeEnum(COMMON_PING, newBuf);
+			gameInstance->GetNetworkSystem()->Send(newBuf, len);
 			break;
 		}
 		case EMessageType::S_Common_RequestId:
@@ -55,17 +56,17 @@ void ACommonNetworkProcessor::RecvProc(FReciveData& data)
 #ifdef DEBUG_RECV
 			MYLOG(Warning, TEXT("recv : S_Common_RequestId"));
 #endif
-			UINT64 steamID = gameInstance->GetSteamID();
+			UINT64 steamID = gameInstance->GetNetworkSystem()->GetSteamID();
 			if (steamID == 0) return;
-			char sendBuf[50], idBuf[30];
+			char sendBuf[sizeof(EMessageType) + sizeof(UINT64)], idBuf[sizeof(UINT64)];
 			int len = CSerializer::UInt64Serializer(idBuf, steamID);
 			int totalLen = CSerializer::SerializeWithEnum(C_Common_AnswerId, idBuf, len, sendBuf);
-			gameInstance->Send(sendBuf, totalLen);
+			gameInstance->GetNetworkSystem()->Send(sendBuf, totalLen);
 			break;
 		}
 		default:
 		{
-			pos += CSerializer::GetSizeNextOfEnum(type, data.buf + pos);
+			cursor += bufLen;
 			break;
 		}
 		}

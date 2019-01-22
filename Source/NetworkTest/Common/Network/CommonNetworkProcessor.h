@@ -5,8 +5,10 @@
 #define DEBUG_RECV
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "../Core/NetworkGameInstance.h"
 #include "CommonNetworkProcessor.generated.h"
+
+struct FReciveData;
+class UNetworkGameInstance;
 
 UCLASS()
 class NETWORKTEST_API ACommonNetworkProcessor : public AActor

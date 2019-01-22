@@ -1,10 +1,10 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// 로비에서 네트워크 메세지를 받는 처리를 하는 클래스.
 
 #pragma once
 
 #include "NetworkTest.h"
 #include "GameFramework/Actor.h"
-#include "../Common/CommonNetworkProcessor.h"
+#include "Common/Network/CommonNetworkProcessor.h"
 #include "LobbyNetworkProcessor.generated.h"
 
 class ALobbyManager;
@@ -24,17 +24,6 @@ protected:
 	virtual void RecvProc(FReciveData& data) override;
 
 private:
-	// 친구 수락창 위젯
-	UPROPERTY()
-	TSubclassOf<class UWidgetFriendRequest> WG_RequestInvite_Class;
-	UPROPERTY()
-	UWidgetFriendRequest* WG_RequestInvite;
-
-	// 실패 안내 위젯
-	UPROPERTY()
-	TSubclassOf<class UUserWidget> WG_Failed_Class;
-	UPROPERTY()
-	UUserWidget* WG_Failed;
 
 	ALobbyManager* LobbyManager;
 

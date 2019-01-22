@@ -7,7 +7,7 @@
 #include "WidgetFriendRequest.generated.h"
 
 /**
- * 
+ * 친구 창 속 친구에 해당하는 클래스
  */
 UCLASS()
 class NETWORKTEST_API UWidgetFriendRequest : public UUserWidget

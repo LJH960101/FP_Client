@@ -17,5 +17,11 @@ class NETWORKTEST_API ULobbyWG : public UUserWidget
 	
 public:
 	UFUNCTION(BlueprintImplementableEvent)
-	void SetPartySlot(int slotNumber, const FString& name, UTexture2D* image);
+	void SetPartySlot(const int& slotNumber, const FString& name, UTexture2D* image, const FString& steamID, bool onReady);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnReady(bool onRead);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnMatching(bool isOn);
 };
